@@ -1,0 +1,340 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+html,
+body,
+#root{
+  width:100%;
+  min-height:100vh;
+}
+
+body{
+  font-family:'Poppins',sans-serif;
+  overflow-x:hidden;
+}
+
+.app{
+
+  width:100vw;
+  min-height:100vh;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  padding:40px;
+
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(59,130,246,0.45),
+      transparent 35%
+    ),
+
+    radial-gradient(
+      circle at bottom right,
+      rgba(139,92,246,0.45),
+      transparent 35%
+    ),
+
+    linear-gradient(
+      135deg,
+      #020617,
+      #0f172a,
+      #1e1b4b
+    );
+}
+
+.hero{
+
+  width:1000px;
+  max-width:90%;
+
+  text-align:center;
+
+  background:rgba(
+    255,
+    255,
+    255,
+    0.05
+  );
+
+  backdrop-filter:blur(20px);
+
+  border:1px solid rgba(
+    255,
+    255,
+    255,
+    0.08
+  );
+
+  border-radius:30px;
+
+  padding:70px;
+
+  box-shadow:
+    0 25px 80px rgba(
+      0,
+      0,
+      0,
+      0.4
+    );
+
+  animation:
+    cardFloat 1s ease;
+}
+
+.hero h1{
+
+  font-size:84px;
+
+  font-weight:800;
+
+  margin-bottom:20px;
+
+  line-height:1.1;
+
+  background:
+    linear-gradient(
+      90deg,
+      #60a5fa,
+      #8b5cf6,
+      #ec4899
+    );
+
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+
+  text-shadow:
+    0 0 25px rgba(
+      96,
+      165,
+      250,
+      0.3
+    ),
+    0 0 50px rgba(
+      139,
+      92,
+      246,
+      0.3
+    );
+
+  animation:
+    logoFloat 1.2s ease;
+}
+
+.hero h2{
+
+  color:white;
+
+  font-size:34px;
+
+  font-weight:600;
+
+  margin-bottom:25px;
+}
+
+.hero p{
+
+  color:#cbd5e1;
+
+  font-size:18px;
+
+  line-height:1.8;
+
+  margin-bottom:45px;
+}
+
+.hero input[type="text"]{
+
+  width:100%;
+
+  padding:20px;
+
+  border:none;
+
+  border-radius:18px;
+
+  background:#1e293b;
+
+  color:white;
+
+  font-size:16px;
+
+  outline:none;
+
+  margin-bottom:25px;
+
+  transition:all 0.3s ease;
+}
+
+.hero input[type="text"]:focus{
+
+  box-shadow:
+    0 0 0 3px rgba(
+      59,
+      130,
+      246,
+      0.4
+    );
+}
+
+.hero input[type="text"]::placeholder{
+
+  color:#94a3b8;
+}
+
+.checkbox{
+
+  display:flex;
+
+  justify-content:center;
+
+  align-items:center;
+
+  gap:10px;
+
+  margin-bottom:30px;
+}
+
+.checkbox input{
+
+  width:18px;
+  height:18px;
+}
+
+.checkbox label{
+
+  color:#cbd5e1;
+
+  font-size:16px;
+}
+
+button{
+
+  padding:
+    18px
+    42px;
+
+  border:none;
+
+  border-radius:18px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #3b82f6,
+      #8b5cf6
+    );
+
+  color:white;
+
+  font-size:18px;
+
+  font-weight:600;
+
+  cursor:pointer;
+
+  transition:
+    all 0.3s ease;
+}
+
+button:hover{
+
+  transform:
+    translateY(-4px);
+
+  box-shadow:
+    0 15px 35px rgba(
+      59,
+      130,
+      246,
+      0.4
+    );
+}
+
+button:active{
+
+  transform:
+    translateY(0);
+}
+
+@keyframes logoFloat{
+
+  0%{
+
+    opacity:0;
+
+    transform:
+      translateY(-80px)
+      scale(0.7);
+  }
+
+  70%{
+
+    transform:
+      translateY(10px)
+      scale(1.05);
+  }
+
+  100%{
+
+    opacity:1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+
+}
+
+@keyframes cardFloat{
+
+  0%{
+
+    opacity:0;
+
+    transform:
+      translateY(50px)
+      scale(0.95);
+  }
+
+  100%{
+
+    opacity:1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+
+}
+
+@media(max-width:768px){
+
+  .hero{
+
+    padding:40px;
+  }
+
+  .hero h1{
+
+    font-size:52px;
+  }
+
+  .hero h2{
+
+    font-size:24px;
+  }
+
+  .hero p{
+
+    font-size:16px;
+  }
+
+}

@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+myenv/
+venv/
+.env
+
+# Generated content
+downloads/
+clips/
+outputs/
+projects/
+
+# Frontend
+node_modules/
+dist/
+
+# VS Code
+.vscode/
