@@ -47,17 +47,22 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount(
-    "/clips",
-    StaticFiles(directory="clips"),
-    name="clips"
-)
-
 DOWNLOAD_FOLDER = "downloads"
+CLIPS_FOLDER = "clips"
 
 os.makedirs(
     DOWNLOAD_FOLDER,
     exist_ok=True
+)
+os.makedirs(
+    CLIPS_FOLDER,
+    exist_ok=True
+)
+
+app.mount(
+    "/clips",
+    StaticFiles(directory=CLIPS_FOLDER),
+    name="clips"
 )
 
 db = get_db()
