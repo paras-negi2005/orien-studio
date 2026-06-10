@@ -1,6 +1,6 @@
 import whisper
 import os
-
+from utils.db import get_db
 
 model = whisper.load_model("base")
 
@@ -81,34 +81,26 @@ def generate_srt(clip_path):
     return srt_path
 
 
-def generate_captions_for_all():
+def generate_captions_for_project(project_id):
 
-    clips_folder = "clips"
+    db = get_db()
+    clips = list(db.clips.find({"project_id": project_id, "clip_path": {"$ne": None}}))
 
     generated_srt = []
 
-    if not os.path.exists(
-        clips_folder
-    ):
-        return generated_srt
-
-    for file in os.listdir(
-        clips_folder
-    ):
-
-        if file.endswith(".mp4"):
-
-            clip_path = os.path.join(
-                clips_folder,
-                file
+    for clip in clips:
+        clip_path = clip["clip_path"]
+        if os.path.exists(clip_path):
+            srt_file = generate_srt(clip_path)
+            db.clips.update_one(
+                {"_id": clip["_id"]},
+                {
+                    "$set": {
+                        "srt_path": srt_file,
+                        "status": "captioned"
+                    }
+                }
             )
-
-            srt_file = generate_srt(
-                clip_path
-            )
-
-            generated_srt.append(
-                srt_file
-            )
+            generated_srt.append(srt_file)
 
     return generated_srt

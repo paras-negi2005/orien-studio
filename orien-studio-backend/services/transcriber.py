@@ -1,12 +1,13 @@
 import whisper
 import os
-import json
+from datetime import datetime
+from utils.db import get_db
 
 # Change to "small" later if you want better accuracy
 model = whisper.load_model("base")
 
 
-def transcribe_video(video_path):
+def transcribe_video(video_path, project_id):
 
     result = model.transcribe(
         video_path,
@@ -16,30 +17,19 @@ def transcribe_video(video_path):
     transcript = result["text"]
     segments = result["segments"]
 
-    os.makedirs(
-        "outputs",
-        exist_ok=True
+    # Save to MongoDB
+    db = get_db()
+    db.transcripts.update_one(
+        {"project_id": project_id},
+        {
+            "$set": {
+                "transcript_text": transcript,
+                "segments": segments,
+                "created_at": datetime.utcnow()
+            }
+        },
+        upsert=True
     )
-
-    with open(
-        "outputs/transcript.txt",
-        "w",
-        encoding="utf-8"
-    ) as f:
-
-        f.write(transcript)
-
-    with open(
-        "outputs/segments.json",
-        "w",
-        encoding="utf-8"
-    ) as f:
-
-        json.dump(
-            segments,
-            f,
-            indent=4
-        )
 
     return {
         "transcript": transcript,

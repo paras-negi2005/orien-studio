@@ -1,6 +1,6 @@
 import os
 import subprocess
-
+from utils.db import get_db
 
 def burn_caption_on_video(
     video_path,
@@ -71,57 +71,32 @@ def burn_caption_on_video(
     return None
 
 
-def burn_all_captions():
+def burn_captions_for_project(project_id):
 
-    clips_folder = "clips"
+    db = get_db()
+    clips = list(db.clips.find({"project_id": project_id, "clip_path": {"$ne": None}, "srt_path": {"$ne": None}}))
 
     generated_files = []
 
-    if not os.path.exists(
-        clips_folder
-    ):
-        return generated_files
+    for clip in clips:
+        video_path = clip["clip_path"]
+        srt_path = clip["srt_path"]
 
-    for file in os.listdir(
-        clips_folder
-    ):
-
-        if (
-            file.endswith(".mp4")
-            and "_captioned"
-            not in file
-        ):
-
-            video_path = os.path.join(
-                clips_folder,
-                file
-            )
-
-            srt_path = (
-                os.path.splitext(
-                    video_path
-                )[0]
-                + ".srt"
-            )
-
-            if not os.path.exists(
+        if os.path.exists(video_path) and os.path.exists(srt_path):
+            output_file = burn_caption_on_video(
+                video_path,
                 srt_path
-            ):
-                print(
-                    f"SRT Missing: {srt_path}"
-                )
-                continue
-
-            output_file = (
-                burn_caption_on_video(
-                    video_path,
-                    srt_path
-                )
             )
 
             if output_file:
-                generated_files.append(
-                    output_file
+                db.clips.update_one(
+                    {"_id": clip["_id"]},
+                    {
+                        "$set": {
+                            "captioned_path": output_file
+                        }
+                    }
                 )
+                generated_files.append(output_file)
 
     return generated_files

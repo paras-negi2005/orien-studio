@@ -1,24 +1,20 @@
 import os
-import json
 import subprocess
+from utils.db import get_db
 
+def generate_clips(video_path, project_id):
 
-def generate_clips(video_path):
-
-    clips_folder = "clips"
+    clips_folder = os.path.join("clips", project_id)
 
     os.makedirs(
         clips_folder,
         exist_ok=True
     )
 
-    with open(
-        "outputs/refined_clips.json",
-        "r",
-        encoding="utf-8"
-    ) as f:
-
-        clips = json.load(f)
+    db = get_db()
+    # Query refined clips for this project
+    clips_cursor = db.clips.find({"project_id": project_id})
+    clips = list(clips_cursor)
 
     generated_files = []
 
@@ -28,10 +24,9 @@ def generate_clips(video_path):
             or
             "end" not in clip
         ):
-            print(
-                f"Skipping invalid clip: {clip}"
-                )
+            print(f"Skipping invalid clip: {clip}")
             continue
+            
         start = clip["start"]
         end = clip["end"]
 
@@ -60,6 +55,17 @@ def generate_clips(video_path):
             command,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL
+        )
+
+        # Update clip path and status in database
+        db.clips.update_one(
+            {"_id": clip["_id"]},
+            {
+                "$set": {
+                    "clip_path": output_file,
+                    "status": "generated"
+                }
+            }
         )
 
         generated_files.append(

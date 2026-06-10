@@ -1,6 +1,6 @@
 import os
 import subprocess
-
+from utils.db import get_db
 
 def convert_to_vertical(video_path):
 
@@ -81,43 +81,30 @@ def convert_to_vertical(video_path):
     return None
 
 
-def convert_all_clips():
+def convert_clips_for_project(project_id):
 
-    clips_folder = "clips"
+    db = get_db()
+    clips = list(db.clips.find({"project_id": project_id}))
 
     generated_files = []
 
-    if not os.path.exists(
-        clips_folder
-    ):
-        return generated_files
+    for clip in clips:
+        # Prefer captioned_path, fall back to clip_path
+        video_path = clip.get("captioned_path") or clip.get("clip_path")
 
-    for file in os.listdir(
-        clips_folder
-    ):
-
-        # Process only captioned videos
-
-        if (
-            file.endswith(".mp4")
-            and "_vertical" not in file
-        ):
-
-            video_path = os.path.join(
-                clips_folder,
-                file
-            )
-
-            output_file = (
-                convert_to_vertical(
-                    video_path
-                )
-            )
+        if video_path and os.path.exists(video_path):
+            output_file = convert_to_vertical(video_path)
 
             if output_file:
-
-                generated_files.append(
-                    output_file
+                db.clips.update_one(
+                    {"_id": clip["_id"]},
+                    {
+                        "$set": {
+                            "vertical_path": output_file,
+                            "status": "verticalized"
+                        }
+                    }
                 )
+                generated_files.append(output_file)
 
     return generated_files
